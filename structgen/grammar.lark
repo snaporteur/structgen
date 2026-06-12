@@ -1,0 +1,11 @@
+start: struct+
+
+struct: "struct" NAME "{" field+ "}"
+
+field: TYPE NAME ";"
+
+TYPE: "float" | "int" | "double" | "string" | "mat4" | "quat"
+
+%import common.CNAME -> NAME
+%import common.WS
+%ignore WS
