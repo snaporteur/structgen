@@ -1,6 +1,6 @@
 # WARN: AI used to generate some parts of this file.
 
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.10)
 project(structgen LANGUAGES NONE)
 
 find_package(Python3 3.9 REQUIRED COMPONENTS Interpreter)
