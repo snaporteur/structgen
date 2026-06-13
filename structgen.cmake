@@ -166,11 +166,18 @@ function(build_struct_target)
     add_library(${BST_NAME} INTERFACE)
 
     # Build the struct
-    build_struct(TARGET ${BST_NAME}
-        INPUT "${BST_INPUT}"
-        OUTPUT "${BST_OUTPUT_DIR}"
-        ${BST_VERBOSE:+VERBOSE}
-    )
+    if(BST_VERBOSE)
+        build_struct(TARGET ${BST_NAME}
+            INPUT "${BST_INPUT}"
+            OUTPUT "${BST_OUTPUT_DIR}"
+            VERBOSE
+        )
+    else()
+        build_struct(TARGET ${BST_NAME}
+            INPUT "${BST_INPUT}"
+            OUTPUT "${BST_OUTPUT_DIR}"
+        )
+    endif()
 
     # Link dependencies if provided
     if(BST_DEPENDENCIES)
@@ -233,11 +240,18 @@ function(build_all_structs)
     # Process each file
     foreach(ST_FILE ${ST_FILES})
         get_filename_component(FILE_NAME "${ST_FILE}" NAME)
-        build_struct(TARGET ${BAS_TARGET}
-            INPUT "${ST_FILE}"
-            OUTPUT "${BAS_OUTPUT}"
-            ${BAS_VERBOSE:+VERBOSE}
-        )
+        if(BAS_VERBOSE)
+            build_struct(TARGET ${BAS_TARGET}
+                INPUT "${ST_FILE}"
+                OUTPUT "${BAS_OUTPUT}"
+                VERBOSE
+            )
+        else()
+            build_struct(TARGET ${BAS_TARGET}
+                INPUT "${ST_FILE}"
+                OUTPUT "${BAS_OUTPUT}"
+            )
+        endif()
     endforeach()
 
     message(STATUS "Configured ${ST_FILES} struct files for generation")
@@ -248,5 +262,5 @@ endfunction()
 # Export the structgen module info for external projects
 # ============================================================================
 
-# Make functions available to parent scope when included via FetchContent
-set(structgen_FOUND TRUE PARENT_SCOPE)
+# Mark structgen as found
+set(structgen_FOUND TRUE)

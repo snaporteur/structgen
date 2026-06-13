@@ -24,6 +24,8 @@ struct {{ struct.name }} {
         total_size += sizeof(glm::mat3);
         {% elif field.type == 'mat4' %}
         total_size += sizeof(glm::mat4);
+        {% elif field.type == 'quat' %}
+        total_size += sizeof(glm::quat);
         {% else %}
         total_size += sizeof({{ field.type }});
         {% endif %}
@@ -54,6 +56,10 @@ struct {{ struct.name }} {
         data.insert(data.end(),
                     reinterpret_cast<const unsigned char*>(&{{ field.name }}),
                     reinterpret_cast<const unsigned char*>(&{{ field.name }}) + sizeof(glm::mat4));
+        {% elif field.type == 'quat' %}
+        data.insert(data.end(),
+                    reinterpret_cast<const unsigned char*>(&{{ field.name }}),
+                    reinterpret_cast<const unsigned char*>(&{{ field.name }}) + sizeof(glm::quat));
         {% else %}
         data.insert(data.end(),
                     reinterpret_cast<const unsigned char*>(&{{ field.name }}),
@@ -102,6 +108,11 @@ struct {{ struct.name }} {
         if (offset + sizeof(glm::mat4) <= data.size()) {
             std::memcpy(&obj.{{ field.name }}, data.data() + offset, sizeof(glm::mat4));
             offset += sizeof(glm::mat4);
+        }
+        {% elif field.type == 'quat' %}
+        if (offset + sizeof(glm::quat) <= data.size()) {
+            std::memcpy(&obj.{{ field.name }}, data.data() + offset, sizeof(glm::quat));
+            offset += sizeof(glm::quat);
         }
         {% else %}
         if (offset + sizeof({{ field.type }}) <= data.size()) {
