@@ -2,6 +2,7 @@
 #include <vector>
 #include <cstring>
 #include <string>
+#include <glm/glm.hpp>
 
 {% for struct in structs %}
 struct {{ struct.name }} {
@@ -15,6 +16,14 @@ struct {{ struct.name }} {
         {% for field in struct.fields %}
         {% if field.type == 'string' %}
         total_size += sizeof(uint32_t) + {{ field.name }}.length();
+        {% elif field.type == 'vec3' %}
+        total_size += sizeof(glm::vec3);
+        {% elif field.type == 'vec4' %}
+        total_size += sizeof(glm::vec4);
+        {% elif field.type == 'mat3' %}
+        total_size += sizeof(glm::mat3);
+        {% elif field.type == 'mat4' %}
+        total_size += sizeof(glm::mat4);
         {% else %}
         total_size += sizeof({{ field.type }});
         {% endif %}
@@ -29,6 +38,22 @@ struct {{ struct.name }} {
         data.insert(data.end(), 
                     reinterpret_cast<const unsigned char*>({{ field.name }}.data()),
                     reinterpret_cast<const unsigned char*>({{ field.name }}.data()) + {{ field.name }}.length());
+        {% elif field.type == 'vec3' %}
+        data.insert(data.end(),
+                    reinterpret_cast<const unsigned char*>(&{{ field.name }}),
+                    reinterpret_cast<const unsigned char*>(&{{ field.name }}) + sizeof(glm::vec3));
+        {% elif field.type == 'vec4' %}
+        data.insert(data.end(),
+                    reinterpret_cast<const unsigned char*>(&{{ field.name }}),
+                    reinterpret_cast<const unsigned char*>(&{{ field.name }}) + sizeof(glm::vec4));
+        {% elif field.type == 'mat3' %}
+        data.insert(data.end(),
+                    reinterpret_cast<const unsigned char*>(&{{ field.name }}),
+                    reinterpret_cast<const unsigned char*>(&{{ field.name }}) + sizeof(glm::mat3));
+        {% elif field.type == 'mat4' %}
+        data.insert(data.end(),
+                    reinterpret_cast<const unsigned char*>(&{{ field.name }}),
+                    reinterpret_cast<const unsigned char*>(&{{ field.name }}) + sizeof(glm::mat4));
         {% else %}
         data.insert(data.end(),
                     reinterpret_cast<const unsigned char*>(&{{ field.name }}),
@@ -57,6 +82,26 @@ struct {{ struct.name }} {
                 );
                 offset += str_len;
             }
+        }
+        {% elif field.type == 'vec3' %}
+        if (offset + sizeof(glm::vec3) <= data.size()) {
+            std::memcpy(&obj.{{ field.name }}, data.data() + offset, sizeof(glm::vec3));
+            offset += sizeof(glm::vec3);
+        }
+        {% elif field.type == 'vec4' %}
+        if (offset + sizeof(glm::vec4) <= data.size()) {
+            std::memcpy(&obj.{{ field.name }}, data.data() + offset, sizeof(glm::vec4));
+            offset += sizeof(glm::vec4);
+        }
+        {% elif field.type == 'mat3' %}
+        if (offset + sizeof(glm::mat3) <= data.size()) {
+            std::memcpy(&obj.{{ field.name }}, data.data() + offset, sizeof(glm::mat3));
+            offset += sizeof(glm::mat3);
+        }
+        {% elif field.type == 'mat4' %}
+        if (offset + sizeof(glm::mat4) <= data.size()) {
+            std::memcpy(&obj.{{ field.name }}, data.data() + offset, sizeof(glm::mat4));
+            offset += sizeof(glm::mat4);
         }
         {% else %}
         if (offset + sizeof({{ field.type }}) <= data.size()) {
