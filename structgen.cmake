@@ -79,20 +79,19 @@ function(build_struct)
     get_filename_component(INPUT_BASENAME "${BUILD_STRUCT_INPUT}" NAME_WLE)
     set(OUTPUT_HEADER "${BUILD_STRUCT_OUTPUT}/${INPUT_BASENAME}.h")
 
-    # Build the structgen command
+    # Build the structgen command using list(APPEND) to properly handle spaces in paths
+    set(STRUCTGEN_CMD)
+    list(APPEND STRUCTGEN_CMD "${Python3_EXECUTABLE}")
+    list(APPEND STRUCTGEN_CMD "-m")
+    list(APPEND STRUCTGEN_CMD "structgen.cli")
+    list(APPEND STRUCTGEN_CMD "build")
+    list(APPEND STRUCTGEN_CMD "--file")
+    list(APPEND STRUCTGEN_CMD "${BUILD_STRUCT_INPUT}")
+    list(APPEND STRUCTGEN_CMD "--out")
+    list(APPEND STRUCTGEN_CMD "${BUILD_STRUCT_OUTPUT}")
+    
     if(BUILD_STRUCT_VERBOSE)
-        set(STRUCTGEN_CMD 
-            ${Python3_EXECUTABLE} -m structgen.cli build 
-            --file "${BUILD_STRUCT_INPUT}"
-            --out "${BUILD_STRUCT_OUTPUT}"
-            --verbose
-        )
-    else()
-        set(STRUCTGEN_CMD 
-            ${Python3_EXECUTABLE} -m structgen.cli build 
-            --file "${BUILD_STRUCT_INPUT}"
-            --out "${BUILD_STRUCT_OUTPUT}"
-        )
+        list(APPEND STRUCTGEN_CMD "--verbose")
     endif()
 
     # Create output directory if it doesn't exist
