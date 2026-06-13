@@ -83,9 +83,16 @@ function(build_struct)
     get_filename_component(STRUCTGEN_DIR ${CMAKE_CURRENT_LIST_FILE} DIRECTORY)
     set(STRUCTGEN_CLI "${STRUCTGEN_DIR}/structgen/cli.py")
 
+    # Set Python command based on OS
+    if(WIN32)
+        set(PYTHON_CMD "python")
+    else()
+        set(PYTHON_CMD "python3")
+    endif()
+
     # Build the structgen command
     set(STRUCTGEN_CMD)
-    list(APPEND STRUCTGEN_CMD "python3")
+    list(APPEND STRUCTGEN_CMD "${PYTHON_CMD}")
     list(APPEND STRUCTGEN_CMD "${STRUCTGEN_CLI}")
     list(APPEND STRUCTGEN_CMD "build")
     list(APPEND STRUCTGEN_CMD "--file")
