@@ -79,11 +79,14 @@ function(build_struct)
     get_filename_component(INPUT_BASENAME "${BUILD_STRUCT_INPUT}" NAME_WLE)
     set(OUTPUT_HEADER "${BUILD_STRUCT_OUTPUT}/${INPUT_BASENAME}.h")
 
-    # Build the structgen command using list(APPEND) to properly handle spaces in paths
+    # Construct path to cli.py
+    get_filename_component(STRUCTGEN_DIR ${CMAKE_CURRENT_LIST_FILE} DIRECTORY)
+    set(STRUCTGEN_CLI "${STRUCTGEN_DIR}/structgen/cli.py")
+
+    # Build the structgen command
     set(STRUCTGEN_CMD)
-    list(APPEND STRUCTGEN_CMD "${Python3_EXECUTABLE}")
-    list(APPEND STRUCTGEN_CMD "-m")
-    list(APPEND STRUCTGEN_CMD "structgen.cli")
+    list(APPEND STRUCTGEN_CMD "python3")
+    list(APPEND STRUCTGEN_CMD "${STRUCTGEN_CLI}")
     list(APPEND STRUCTGEN_CMD "build")
     list(APPEND STRUCTGEN_CMD "--file")
     list(APPEND STRUCTGEN_CMD "${BUILD_STRUCT_INPUT}")
