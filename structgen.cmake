@@ -79,9 +79,14 @@ function(build_struct)
     get_filename_component(INPUT_BASENAME "${BUILD_STRUCT_INPUT}" NAME_WLE)
     set(OUTPUT_HEADER "${BUILD_STRUCT_OUTPUT}/${INPUT_BASENAME}.h")
 
-    # Construct path to cli.py
-    get_filename_component(STRUCTGEN_DIR ${CMAKE_CURRENT_LIST_FILE} DIRECTORY)
+    # Get the directory containing this CMake file
+    set(STRUCTGEN_DIR "${CMAKE_CURRENT_LIST_DIR}")
     set(STRUCTGEN_CLI "${STRUCTGEN_DIR}/structgen/cli.py")
+    
+    # Verify cli.py exists
+    if(NOT EXISTS "${STRUCTGEN_CLI}")
+        message(FATAL_ERROR "build_struct: Could not find cli.py at ${STRUCTGEN_CLI}")
+    endif()
 
     # Set Python command based on OS
     if(WIN32)
@@ -90,8 +95,9 @@ function(build_struct)
         set(PYTHON_CMD "python3")
     endif()
 
-    # Build the structgen command
+    # Build the structgen command with PYTHONPATH to ensure structgen module can be imported
     set(STRUCTGEN_CMD)
+    list(APPEND STRUCTGEN_CMD "${CMAKE_COMMAND}" "-E" "env" "PYTHONPATH=${STRUCTGEN_DIR}")
     list(APPEND STRUCTGEN_CMD "${PYTHON_CMD}")
     list(APPEND STRUCTGEN_CMD "${STRUCTGEN_CLI}")
     list(APPEND STRUCTGEN_CMD "build")
