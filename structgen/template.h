@@ -7,7 +7,7 @@
 {% for struct in structs %}
 struct {{ struct.name }} {
     {% for field in struct.fields %}
-    {{ field.type }} {{ field.name }};
+    {% if field.type in ['vec3', 'vec4', 'mat3', 'mat4', 'quat'] %}glm::{% endif %}{{ field.type }} {{ field.name }};
     {% endfor %}
 
     std::vector<unsigned char> serialize() const {
