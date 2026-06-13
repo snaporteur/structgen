@@ -107,14 +107,23 @@ function(build_struct)
         VERBATIM
     )
 
+    # Determine if target is INTERFACE or regular
+    get_target_property(TARGET_TYPE ${BUILD_STRUCT_TARGET} TYPE)
+    
+    if(TARGET_TYPE STREQUAL "INTERFACE_LIBRARY")
+        set(SCOPE INTERFACE)
+    else()
+        set(SCOPE PRIVATE)
+    endif()
+
     # Add the generated header to the target's sources
-    target_sources(${BUILD_STRUCT_TARGET} PRIVATE "${OUTPUT_HEADER}")
+    target_sources(${BUILD_STRUCT_TARGET} ${SCOPE} "${OUTPUT_HEADER}")
 
     # Ensure the generated file is part of the build
     set_source_files_properties("${OUTPUT_HEADER}" PROPERTIES GENERATED TRUE)
 
     # Add the output directory to the target's include directories
-    target_include_directories(${BUILD_STRUCT_TARGET} PRIVATE "${BUILD_STRUCT_OUTPUT}")
+    target_include_directories(${BUILD_STRUCT_TARGET} ${SCOPE} "${BUILD_STRUCT_OUTPUT}")
 
     if(BUILD_STRUCT_VERBOSE)
         message(STATUS "build_struct: Configured generation of ${OUTPUT_HEADER}")
