@@ -3,6 +3,7 @@
 #include <cstring>
 #include <string>
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 {% for struct in structs %}
 struct {{ struct.name }} {
